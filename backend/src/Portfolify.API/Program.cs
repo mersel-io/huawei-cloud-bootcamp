@@ -1,3 +1,4 @@
+using Portfolify.API.Conventions;
 using Portfolify.API.Middleware;
 using Portfolify.Application;
 using Portfolify.Infrastructure;
@@ -15,7 +16,10 @@ try
     builder.Host.UseSerilog((context, configuration) =>
         configuration.ReadFrom.Configuration(context.Configuration));
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers(options =>
+    {
+        options.Conventions.Add(new KebabCaseRouteConvention());
+    });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
