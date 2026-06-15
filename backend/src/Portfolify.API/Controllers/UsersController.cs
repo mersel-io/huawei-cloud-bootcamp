@@ -36,6 +36,7 @@ public sealed class UsersController : ControllerBase
             request.FirstName,
             request.LastName,
             request.Email,
+            request.Password,
             request.Role);
 
         var result = await _mediator.Send(command);

@@ -22,6 +22,18 @@ public sealed class Profile : AggregateRoot, IAuditableEntity
     private readonly List<ProfileLink> _links = [];
     public IReadOnlyCollection<ProfileLink> Links => _links.AsReadOnly();
 
+    private readonly List<Skill> _skills = [];
+    public IReadOnlyCollection<Skill> Skills => _skills.AsReadOnly();
+
+    private readonly List<Experience> _experiences = [];
+    public IReadOnlyCollection<Experience> Experiences => _experiences.AsReadOnly();
+
+    private readonly List<Education> _education = [];
+    public IReadOnlyCollection<Education> Education => _education.AsReadOnly();
+
+    private readonly List<Project> _projects = [];
+    public IReadOnlyCollection<Project> Projects => _projects.AsReadOnly();
+
     private Profile() { }
 
     public static Profile Create(
@@ -72,5 +84,14 @@ public sealed class Profile : AggregateRoot, IAuditableEntity
         var link = _links.FirstOrDefault(l => l.Id == linkId);
         if (link is not null)
             _links.Remove(link);
+    }
+
+    public void AddSkill(Skill skill) => _skills.Add(skill);
+
+    public void RemoveSkill(Guid skillId)
+    {
+        var skill = _skills.FirstOrDefault(s => s.Id == skillId);
+        if (skill is not null)
+            _skills.Remove(skill);
     }
 }

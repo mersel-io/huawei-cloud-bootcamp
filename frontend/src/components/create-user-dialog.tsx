@@ -35,6 +35,7 @@ export function CreateUserDialog({
     firstName: "",
     lastName: "",
     email: "",
+    password: "",
     role: "Developer",
   });
 
@@ -45,7 +46,13 @@ export function CreateUserDialog({
       const res = await api.users.create(form);
       if (res.isSuccess && res.data) {
         onCreated(res.data.id);
-        setForm({ firstName: "", lastName: "", email: "", role: "Developer" });
+        setForm({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          role: "Developer",
+        });
       } else {
         alert(res.errorMessage || "Bir hata oluştu.");
       }
@@ -100,10 +107,25 @@ export function CreateUserDialog({
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="password">Şifre</Label>
+            <Input
+              id="password"
+              type="password"
+              value={form.password}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, password: e.target.value }))
+              }
+              required
+              minLength={6}
+            />
+          </div>
+          <div className="space-y-2">
             <Label>Rol</Label>
             <Select
               value={form.role}
-              onValueChange={(v) => setForm((f) => ({ ...f, role: v ?? "Developer" }))}
+              onValueChange={(v) =>
+                setForm((f) => ({ ...f, role: v ?? "Developer" }))
+              }
             >
               <SelectTrigger>
                 <SelectValue />

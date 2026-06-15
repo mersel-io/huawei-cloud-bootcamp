@@ -15,5 +15,15 @@ public sealed class MappingProfile : AutoMapper.Profile
             .ForMember(d => d.Visibility, opt => opt.MapFrom(s => s.Visibility.ToString()));
 
         CreateMap<Domain.Entities.ProfileLink, ProfileLinkDto>();
+
+        CreateMap<Domain.Entities.Skill, SkillDto>()
+            .ForMember(d => d.Level, opt => opt.MapFrom(s => s.Level.ToString()));
+
+        CreateMap<Domain.Entities.Experience, ExperienceDto>();
+
+        CreateMap<Domain.Entities.Education, EducationDto>();
+
+        CreateMap<Domain.Entities.Project, ProjectDto>()
+            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
     }
 }

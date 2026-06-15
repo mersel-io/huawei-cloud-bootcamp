@@ -29,6 +29,26 @@ public sealed class ProfileConfiguration : IEntityTypeConfiguration<Profile>
             .HasForeignKey(l => l.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(p => p.Skills)
+            .WithOne(s => s.Profile)
+            .HasForeignKey(s => s.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Experiences)
+            .WithOne(e => e.Profile)
+            .HasForeignKey(e => e.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Education)
+            .WithOne(e => e.Profile)
+            .HasForeignKey(e => e.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Projects)
+            .WithOne(pr => pr.Profile)
+            .HasForeignKey(pr => pr.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Ignore(p => p.DomainEvents);
     }
 }

@@ -8,6 +8,7 @@ public sealed record CreateUserCommand(
     string FirstName,
     string LastName,
     string Email,
+    string Password,
     string Role) : ICommand<Response<UserDto>>;
 
 public sealed record UpdateUserCommand(

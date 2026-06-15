@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { UserDto, ProfileDto } from "@/lib/types";
+import { useAuth } from "@/context/auth-context";
+import { ProfileDto } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +19,9 @@ import {
   EyeOff,
   Trash2,
   Pencil,
-  UserPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { CreateUserDialog } from "@/components/create-user-dialog";
 import { CreateProfileDialog } from "@/components/create-profile-dialog";
 
 function visibilityIcon(visibility: string) {
@@ -38,20 +38,11 @@ function visibilityIcon(visibility: string) {
 }
 
 export default function DashboardPage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [user, setUser] = useState<UserDto | null>(null);
+  const router = useRouter();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [profiles, setProfiles] = useState<ProfileDto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateUser, setShowCreateUser] = useState(false);
   const [showCreateProfile, setShowCreateProfile] = useState(false);
-  const initialized = useRef(false);
-
-  const loadUserData = useCallback(async (uid: string) => {
-    try {
-      const userRes = await api.users.getById(uid);
-      if (userRes.isSuccess) setUser(userRes.data);
-    } catch {}
-  }, []);
 
   const loadProfiles = useCallback(async (uid: string) => {
     try {
@@ -64,32 +55,20 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-    const stored = localStorage.getItem("portfolify_user_id");
-    if (stored) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUserId(stored);
-      loadUserData(stored);
-      loadProfiles(stored);
-    } else {
-      setLoading(false);
+    if (!authLoading && !isAuthenticated) {
+      router.push("/login");
+      return;
     }
-  }, [loadUserData, loadProfiles]);
+    if (authLoading || !user) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadProfiles(user.id);
+  }, [authLoading, isAuthenticated, user, router, loadProfiles]);
 
   const refreshProfiles = useCallback(async () => {
-    if (!userId) return;
-    await loadProfiles(userId);
-  }, [userId, loadProfiles]);
-
-  const handleUserCreated = (id: string) => {
-    localStorage.setItem("portfolify_user_id", id);
-    setUserId(id);
-    loadUserData(id);
-    loadProfiles(id);
-    setShowCreateUser(false);
-    toast.success("Kullanıcı başarıyla oluşturuldu!");
-  };
+    if (!user) return;
+    await loadProfiles(user.id);
+  }, [user, loadProfiles]);
 
   const handleProfileCreated = () => {
     setShowCreateProfile(false);
@@ -108,83 +87,46 @@ export default function DashboardPage() {
     }
   };
 
-  if (!userId && !loading) {
+  if (authLoading || (!isAuthenticated && !authLoading)) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-16">
-        <div className="mx-auto max-w-md text-center">
-          <h1 className="text-3xl font-bold">Hoş Geldiniz</h1>
-          <p className="mt-4 text-muted-foreground">
-            Portfolify kullanmaya başlamak için önce bir kullanıcı profili
-            oluşturun.
-          </p>
-          <Button
-            size="lg"
-            className="mt-8 gap-2"
-            onClick={() => setShowCreateUser(true)}
-          >
-            <UserPlus className="h-4 w-4" />
-            Kullanıcı Oluştur
-          </Button>
-        </div>
-        <CreateUserDialog
-          open={showCreateUser}
-          onOpenChange={setShowCreateUser}
-          onCreated={handleUserCreated}
-        />
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        <Skeleton className="h-8 w-48" />
       </div>
     );
   }
+
+  if (!user) return null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Panel</h1>
-          {user && (
-            <p className="mt-1 text-muted-foreground">
-              Hoş geldiniz, {user.firstName} {user.lastName}
-            </p>
-          )}
+          <p className="mt-1 text-muted-foreground">
+            Hoş geldiniz, {user.firstName} {user.lastName}
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => {
-              localStorage.removeItem("portfolify_user_id");
-              setUserId(null);
-              setUser(null);
-              setProfiles([]);
-            }}
-          >
-            Çıkış
-          </Button>
-          {userId && (
-            <Button className="gap-2" onClick={() => setShowCreateProfile(true)}>
-              <Plus className="h-4 w-4" />
-              Yeni Profil
-            </Button>
-          )}
-        </div>
+        <Button className="gap-2" onClick={() => setShowCreateProfile(true)}>
+          <Plus className="h-4 w-4" />
+          Yeni Profil
+        </Button>
       </div>
 
-      {user && (
-        <Card className="mb-8">
-          <CardContent className="flex items-center gap-4 py-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
-              {user.firstName.charAt(0)}
-              {user.lastName.charAt(0)}
-            </div>
-            <div className="flex-1">
-              <p className="font-semibold">
-                {user.firstName} {user.lastName}
-              </p>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
-            </div>
-            <Badge variant="secondary">{user.role}</Badge>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="mb-8">
+        <CardContent className="flex items-center gap-4 py-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
+            {user.firstName.charAt(0)}
+            {user.lastName.charAt(0)}
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold">
+              {user.firstName} {user.lastName}
+            </p>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
+          </div>
+          <Badge variant="secondary">{user.role}</Badge>
+        </CardContent>
+      </Card>
 
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">Profillerim</h2>
@@ -293,16 +235,11 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <CreateUserDialog
-        open={showCreateUser}
-        onOpenChange={setShowCreateUser}
-        onCreated={handleUserCreated}
-      />
       <CreateProfileDialog
         open={showCreateProfile}
         onOpenChange={setShowCreateProfile}
         onCreated={handleProfileCreated}
-        userId={userId}
+        userId={user.id}
       />
     </div>
   );

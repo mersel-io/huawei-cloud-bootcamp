@@ -39,8 +39,12 @@ public sealed class Skill : Entity
         };
     }
 
-    public void Update(SkillLevel level, string? category, int displayOrder, string? iconUrl)
+    public void Update(string name, SkillLevel level, string? category, int displayOrder, string? iconUrl)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainException("Skill name cannot be empty.");
+
+        Name = name.Trim();
         Level = level;
         Category = category?.Trim();
         DisplayOrder = displayOrder;

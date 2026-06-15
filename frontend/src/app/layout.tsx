@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/navbar";
+import { AuthProvider } from "@/context/auth-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="tr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+        </AuthProvider>
         <footer className="border-t py-8 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Portfolify. Tüm hakları saklıdır.</p>
         </footer>

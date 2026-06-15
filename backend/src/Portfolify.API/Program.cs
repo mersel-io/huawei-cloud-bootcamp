@@ -1,7 +1,12 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Portfolify.API.Conventions;
 using Portfolify.API.Middleware;
 using Portfolify.Application;
 using Portfolify.Infrastructure;
+using Portfolify.Infrastructure.Services;
 using Portfolify.Persistence;
 using Serilog;
 
@@ -24,10 +29,44 @@ try
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new() { Title = "Portfolify API", Version = "v1" });
+
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token.",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        });
+
+        c.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+        {
+            { new OpenApiSecuritySchemeReference("Bearer"), [] }
+        });
     });
 
+    var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
+
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+            };
+        });
+
+    builder.Services.AddAuthorization();
+
     builder.Services.AddApplicationServices();
-    builder.Services.AddInfrastructureServices();
+    builder.Services.AddInfrastructureServices(builder.Configuration);
     builder.Services.AddPersistenceServices(builder.Configuration);
 
     builder.Services.AddCors(options =>
@@ -55,6 +94,7 @@ try
 
     app.UseHttpsRedirection();
     app.UseCors();
+    app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
     app.MapHealthChecks("/health");

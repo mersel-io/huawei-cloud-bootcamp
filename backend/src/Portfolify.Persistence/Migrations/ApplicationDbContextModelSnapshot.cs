@@ -590,6 +590,12 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("linked_in_url");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("password_hash");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text")
@@ -705,7 +711,7 @@ namespace Portfolify.Persistence.Migrations
             modelBuilder.Entity("Portfolify.Domain.Entities.Skill", b =>
                 {
                     b.HasOne("Portfolify.Domain.Entities.Profile", "Profile")
-                        .WithMany()
+                        .WithMany("Skills")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -717,6 +723,8 @@ namespace Portfolify.Persistence.Migrations
             modelBuilder.Entity("Portfolify.Domain.Entities.Profile", b =>
                 {
                     b.Navigation("Links");
+
+                    b.Navigation("Skills");
                 });
 
             modelBuilder.Entity("Portfolify.Domain.Entities.Project", b =>

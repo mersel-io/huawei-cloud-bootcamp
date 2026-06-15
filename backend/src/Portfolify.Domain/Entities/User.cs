@@ -9,6 +9,7 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public Email Email { get; private set; } = null!;
+    public string PasswordHash { get; private set; } = null!;
     public string? Bio { get; private set; }
     public string? AvatarUrl { get; private set; }
     public UserRole Role { get; private set; }
@@ -32,12 +33,15 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         string firstName,
         string lastName,
         Email email,
-        UserRole role)
+        UserRole role,
+        string passwordHash)
     {
         if (string.IsNullOrWhiteSpace(firstName))
             throw new DomainException("First name cannot be empty.");
         if (string.IsNullOrWhiteSpace(lastName))
             throw new DomainException("Last name cannot be empty.");
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            throw new DomainException("Password hash cannot be empty.");
 
         var user = new User
         {
@@ -46,6 +50,7 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
             LastName = lastName.Trim(),
             Email = email,
             Role = role,
+            PasswordHash = passwordHash,
             CreatedAtUtc = DateTime.UtcNow
         };
 
@@ -60,6 +65,14 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         LastName = string.IsNullOrWhiteSpace(lastName) ? LastName : lastName.Trim();
         Bio = bio?.Trim();
         AvatarUrl = avatarUrl?.Trim();
+    }
+
+    public void UpdatePasswordHash(string passwordHash)
+    {
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            throw new DomainException("Password hash cannot be empty.");
+
+        PasswordHash = passwordHash;
     }
 
     public void AddSocialLink(SocialLink link)

@@ -19,6 +19,10 @@ public sealed class GetProfileByIdQueryHandler(
     {
         var profile = await context.Profiles
             .Include(p => p.Links)
+            .Include(p => p.Skills)
+            .Include(p => p.Experiences)
+            .Include(p => p.Education)
+            .Include(p => p.Projects)
             .FirstOrDefaultAsync(p => p.Id == request.ProfileId, cancellationToken)
             ?? throw new NotFoundException("Profile", request.ProfileId);
 
@@ -35,6 +39,10 @@ public sealed class GetProfileBySlugQueryHandler(
     {
         var profile = await context.Profiles
             .Include(p => p.Links)
+            .Include(p => p.Skills)
+            .Include(p => p.Experiences)
+            .Include(p => p.Education)
+            .Include(p => p.Projects)
             .FirstOrDefaultAsync(p => p.Slug == request.Slug, cancellationToken)
             ?? throw new NotFoundException("Profile", request.Slug);
 
@@ -51,6 +59,10 @@ public sealed class GetProfilesByUserIdQueryHandler(
     {
         var query = context.Profiles
             .Include(p => p.Links)
+            .Include(p => p.Skills)
+            .Include(p => p.Experiences)
+            .Include(p => p.Education)
+            .Include(p => p.Projects)
             .Where(p => p.UserId == request.UserId);
 
         var totalCount = await query.CountAsync(cancellationToken);

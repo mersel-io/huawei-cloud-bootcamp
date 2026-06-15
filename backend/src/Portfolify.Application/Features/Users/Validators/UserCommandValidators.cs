@@ -19,6 +19,11 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("A valid email address is required.");
 
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Password is required.")
+            .MinimumLength(6).WithMessage("Password must be at least 6 characters.")
+            .MaximumLength(100);
+
         RuleFor(x => x.Role)
             .NotEmpty().WithMessage("Role is required.")
             .Must(r => Enum.TryParse<Domain.Enums.UserRole>(r, out _))

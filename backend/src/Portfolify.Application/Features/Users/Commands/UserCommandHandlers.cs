@@ -13,7 +13,8 @@ namespace Portfolify.Application.Features.Users.Commands;
 
 public sealed class CreateUserCommandHandler(
     IApplicationDbContext context,
-    IMapper mapper) : IRequestHandler<CreateUserCommand, Response<UserDto>>
+    IMapper mapper,
+    IPasswordHasher passwordHasher) : IRequestHandler<CreateUserCommand, Response<UserDto>>
 {
     public async Task<Response<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -25,11 +26,14 @@ public sealed class CreateUserCommandHandler(
         if (!Enum.TryParse<UserRole>(request.Role, out var role))
             throw new BadRequestException("Invalid user role.");
 
+        var passwordHash = passwordHasher.Hash(request.Password);
+
         var user = User.Create(
             request.FirstName,
             request.LastName,
             email,
-            role);
+            role,
+            passwordHash);
 
         context.Add(user);
         await context.SaveChangesAsync(cancellationToken);
