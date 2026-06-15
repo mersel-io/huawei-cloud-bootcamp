@@ -10,8 +10,7 @@ public sealed record CreateProfileCommand(
     string Title,
     string? Subtitle,
     string? Bio,
-    string Visibility,
-    Guid TenantId) : ICommand<Response<ProfileDto>>;
+    string Visibility) : ICommand<Response<ProfileDto>>;
 
 public sealed record UpdateProfileCommand(
     Guid ProfileId,

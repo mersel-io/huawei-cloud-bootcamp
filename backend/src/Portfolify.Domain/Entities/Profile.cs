@@ -3,7 +3,7 @@ using Portfolify.Domain.Enums;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class Profile : AggregateRoot, IAuditableEntity, ITenantEntity
+public sealed class Profile : AggregateRoot, IAuditableEntity
 {
     public Guid UserId { get; private set; }
     public string Slug { get; private set; } = null!;
@@ -14,7 +14,6 @@ public sealed class Profile : AggregateRoot, IAuditableEntity, ITenantEntity
     public string? Theme { get; private set; }
     public bool IsPrimary { get; private set; }
 
-    public Guid TenantId { get; set; }
     DateTime IAuditableEntity.CreatedAtUtc { get; set; }
     DateTime? IAuditableEntity.UpdatedAtUtc { get; set; }
 
@@ -29,7 +28,6 @@ public sealed class Profile : AggregateRoot, IAuditableEntity, ITenantEntity
         Guid userId,
         string slug,
         string title,
-        Guid tenantId,
         ProfileVisibility visibility = ProfileVisibility.Public,
         string? subtitle = null,
         string? bio = null)
@@ -54,7 +52,6 @@ public sealed class Profile : AggregateRoot, IAuditableEntity, ITenantEntity
             Subtitle = subtitle?.Trim(),
             Bio = bio?.Trim(),
             Visibility = visibility,
-            TenantId = tenantId,
             CreatedAtUtc = DateTime.UtcNow
         };
     }

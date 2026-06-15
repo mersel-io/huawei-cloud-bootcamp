@@ -6,5 +6,4 @@ public sealed record ContactMessageReceivedEvent(
     Guid MessageId,
     Guid ProfileId,
     string SenderName,
-    string SenderEmail,
-    Guid TenantId) : DomainEvent;
+    string SenderEmail) : DomainEvent;

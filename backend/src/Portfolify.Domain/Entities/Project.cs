@@ -3,7 +3,7 @@ using Portfolify.Domain.Enums;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class Project : AggregateRoot, IAuditableEntity, ITenantEntity
+public sealed class Project : AggregateRoot, IAuditableEntity
 {
     public Guid ProfileId { get; private set; }
     public string Title { get; private set; } = null!;
@@ -15,7 +15,6 @@ public sealed class Project : AggregateRoot, IAuditableEntity, ITenantEntity
     public int DisplayOrder { get; private set; }
     public string? Technologies { get; private set; }
 
-    public Guid TenantId { get; set; }
     DateTime IAuditableEntity.CreatedAtUtc { get; set; }
     DateTime? IAuditableEntity.UpdatedAtUtc { get; set; }
 
@@ -29,7 +28,6 @@ public sealed class Project : AggregateRoot, IAuditableEntity, ITenantEntity
     public static Project Create(
         Guid profileId,
         string title,
-        Guid tenantId,
         string? description = null,
         string? repositoryUrl = null,
         string? liveUrl = null,
@@ -67,7 +65,6 @@ public sealed class Project : AggregateRoot, IAuditableEntity, ITenantEntity
             Status = status,
             DisplayOrder = displayOrder,
             Technologies = technologies?.Trim(),
-            TenantId = tenantId,
             CreatedAtUtc = DateTime.UtcNow
         };
     }

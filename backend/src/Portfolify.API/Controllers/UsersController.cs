@@ -29,16 +29,6 @@ public sealed class UsersController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("tenant/{tenantId:guid}")]
-    public async Task<ActionResult<PagedResponse<UserDto>>> GetByTenant(
-        Guid tenantId,
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 20)
-    {
-        var result = await _mediator.Send(new GetUsersByTenantQuery(tenantId, pageNumber, pageSize));
-        return Ok(result);
-    }
-
     [HttpPost]
     public async Task<ActionResult<Response<UserDto>>> Create([FromBody] CreateUserRequest request)
     {
@@ -46,8 +36,7 @@ public sealed class UsersController : ControllerBase
             request.FirstName,
             request.LastName,
             request.Email,
-            request.Role,
-            request.TenantId);
+            request.Role);
 
         var result = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result);

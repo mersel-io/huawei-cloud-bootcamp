@@ -29,8 +29,7 @@ public sealed class CreateUserCommandHandler(
             request.FirstName,
             request.LastName,
             email,
-            role,
-            request.TenantId);
+            role);
 
         context.Add(user);
         await context.SaveChangesAsync(cancellationToken);

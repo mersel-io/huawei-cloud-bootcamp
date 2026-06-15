@@ -35,9 +35,6 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.GitHubUsername).HasMaxLength(100);
         builder.Property(u => u.LinkedInUrl).HasMaxLength(500);
 
-        builder.Property(u => u.TenantId).IsRequired();
-        builder.HasIndex(u => u.TenantId);
-
         builder.Property(u => u.IsDeleted).HasDefaultValue(false);
         builder.Property(u => u.CreatedAtUtc).IsRequired();
         builder.Property(u => u.UpdatedAtUtc);

@@ -79,10 +79,6 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("subject");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc");
@@ -95,9 +91,6 @@ namespace Portfolify.Persistence.Migrations
 
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_contact_messages_status");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_contact_messages_tenant_id");
 
                     b.ToTable("contact_messages", (string)null);
                 });
@@ -167,10 +160,6 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("start_date");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc");
@@ -180,9 +169,6 @@ namespace Portfolify.Persistence.Migrations
 
                     b.HasIndex("ProfileId")
                         .HasDatabaseName("ix_educations_profile_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_educations_tenant_id");
 
                     b.ToTable("educations", (string)null);
                 });
@@ -252,10 +238,6 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("start_date");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc");
@@ -265,9 +247,6 @@ namespace Portfolify.Persistence.Migrations
 
                     b.HasIndex("ProfileId")
                         .HasDatabaseName("ix_experiences_profile_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_experiences_tenant_id");
 
                     b.ToTable("experiences", (string)null);
                 });
@@ -305,10 +284,6 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("character varying(300)")
                         .HasColumnName("subtitle");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.Property<string>("Theme")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
@@ -339,9 +314,6 @@ namespace Portfolify.Persistence.Migrations
                     b.HasIndex("Slug")
                         .IsUnique()
                         .HasDatabaseName("ix_profiles_slug");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_profiles_tenant_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_profiles_user_id");
@@ -439,10 +411,6 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("technologies");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -458,9 +426,6 @@ namespace Portfolify.Persistence.Migrations
 
                     b.HasIndex("ProfileId")
                         .HasDatabaseName("ix_projects_profile_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_projects_tenant_id");
 
                     b.ToTable("projects", (string)null);
                 });
@@ -529,18 +494,11 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("profile_id");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_skills");
 
                     b.HasIndex("ProfileId")
                         .HasDatabaseName("ix_skills_profile_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_skills_tenant_id");
 
                     b.ToTable("skills", (string)null);
                 });
@@ -563,73 +521,14 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_tags");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_tags_tenant_id");
-
-                    b.HasIndex("TenantId", "Name")
+                    b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_tags_tenant_id_name");
+                        .HasDatabaseName("ix_tags_name");
 
                     b.ToTable("tags", (string)null);
-                });
-
-            modelBuilder.Entity("Portfolify.Domain.Entities.Tenant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
-
-                    b.Property<string>("Domain")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("domain");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("is_active");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("slug");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenants");
-
-                    b.HasIndex("Domain")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tenants_domain");
-
-                    b.HasIndex("Slug")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tenants_slug");
-
-                    b.ToTable("tenants", (string)null);
                 });
 
             modelBuilder.Entity("Portfolify.Domain.Entities.User", b =>
@@ -690,19 +589,12 @@ namespace Portfolify.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("role");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc");
 
                     b.HasKey("Id")
                         .HasName("pk_users");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_users_tenant_id");
 
                     b.ToTable("users", (string)null);
                 });
@@ -814,13 +706,6 @@ namespace Portfolify.Persistence.Migrations
 
             modelBuilder.Entity("Portfolify.Domain.Entities.User", b =>
                 {
-                    b.HasOne("Portfolify.Domain.Entities.Tenant", null)
-                        .WithMany("Users")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_users_tenants_tenant_id");
-
                     b.OwnsOne("Portfolify.Domain.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -858,11 +743,6 @@ namespace Portfolify.Persistence.Migrations
             modelBuilder.Entity("Portfolify.Domain.Entities.Project", b =>
                 {
                     b.Navigation("ProjectTags");
-                });
-
-            modelBuilder.Entity("Portfolify.Domain.Entities.Tenant", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Portfolify.Domain.Entities.User", b =>

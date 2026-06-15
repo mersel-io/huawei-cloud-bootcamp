@@ -12,7 +12,4 @@ public interface ISoftDeletableEntity
     DateTime? DeletedAtUtc { get; set; }
 }
 
-public interface ITenantEntity
-{
-    Guid TenantId { get; set; }
-}
+

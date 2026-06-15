@@ -38,26 +38,3 @@ public sealed class GetUserByEmailQueryHandler(
         return Response<UserDto>.Success(dto);
     }
 }
-
-public sealed class GetUsersByTenantQueryHandler(
-    IApplicationDbContext context,
-    IMapper mapper) : IRequestHandler<GetUsersByTenantQuery, PagedResponse<UserDto>>
-{
-    public async Task<PagedResponse<UserDto>> Handle(GetUsersByTenantQuery request, CancellationToken cancellationToken)
-    {
-        var users = await context.Users
-            .Where(u => u.TenantId == request.TenantId && !u.IsDeleted)
-            .OrderBy(u => u.FirstName)
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-
-        var totalCount = await context.Users
-            .CountAsync(u => u.TenantId == request.TenantId && !u.IsDeleted, cancellationToken);
-
-        var dtos = mapper.Map<IReadOnlyCollection<UserDto>>(users);
-
-        return new PagedResponse<UserDto>(dtos, totalCount, request.PageNumber, request.PageSize);
-    }
-}

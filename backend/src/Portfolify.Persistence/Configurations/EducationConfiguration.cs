@@ -21,12 +21,10 @@ public sealed class EducationConfiguration : IEntityTypeConfiguration<Education>
         builder.Property(e => e.IsCurrent).HasDefaultValue(false);
         builder.Property(e => e.LogoUrl).HasMaxLength(500);
         builder.Property(e => e.DisplayOrder).IsRequired();
-        builder.Property(e => e.TenantId).IsRequired();
         builder.Property(e => e.CreatedAtUtc).IsRequired();
         builder.Property(e => e.UpdatedAtUtc);
 
         builder.HasIndex(e => e.ProfileId);
-        builder.HasIndex(e => e.TenantId);
 
         builder.Ignore(e => e.DomainEvents);
     }

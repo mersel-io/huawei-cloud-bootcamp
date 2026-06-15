@@ -2,16 +2,14 @@ using Portfolify.Domain.Common;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class Tag : Entity, ITenantEntity
+public sealed class Tag : Entity
 {
     public string Name { get; private set; } = null!;
     public string? Color { get; private set; }
 
-    public Guid TenantId { get; set; }
-
     private Tag() { }
 
-    public static Tag Create(string name, Guid tenantId, string? color = null)
+    public static Tag Create(string name, string? color = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new DomainException("Tag name cannot be empty.");
@@ -20,7 +18,6 @@ public sealed class Tag : Entity, ITenantEntity
         {
             Id = Guid.NewGuid(),
             Name = name.Trim().ToLowerInvariant(),
-            TenantId = tenantId,
             Color = color?.Trim()
         };
     }

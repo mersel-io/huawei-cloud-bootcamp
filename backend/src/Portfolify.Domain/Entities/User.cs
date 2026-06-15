@@ -4,7 +4,7 @@ using Portfolify.Domain.ValueObjects;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity, ITenantEntity
+public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
 {
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
@@ -15,7 +15,6 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public string? GitHubUsername { get; private set; }
     public string? LinkedInUrl { get; private set; }
 
-    public Guid TenantId { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAtUtc { get; set; }
     DateTime IAuditableEntity.CreatedAtUtc { get; set; }
@@ -33,8 +32,7 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         string firstName,
         string lastName,
         Email email,
-        UserRole role,
-        Guid tenantId)
+        UserRole role)
     {
         if (string.IsNullOrWhiteSpace(firstName))
             throw new DomainException("First name cannot be empty.");
@@ -48,11 +46,10 @@ public sealed class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
             LastName = lastName.Trim(),
             Email = email,
             Role = role,
-            TenantId = tenantId,
             CreatedAtUtc = DateTime.UtcNow
         };
 
-        user.RaiseDomainEvent(new Events.UserCreatedEvent(user.Id, tenantId));
+        user.RaiseDomainEvent(new Events.UserCreatedEvent(user.Id));
 
         return user;
     }

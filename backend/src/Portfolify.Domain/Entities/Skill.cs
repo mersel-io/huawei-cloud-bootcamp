@@ -3,7 +3,7 @@ using Portfolify.Domain.Enums;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class Skill : Entity, ITenantEntity
+public sealed class Skill : Entity
 {
     public Guid ProfileId { get; private set; }
     public string Name { get; private set; } = null!;
@@ -11,8 +11,6 @@ public sealed class Skill : Entity, ITenantEntity
     public string? Category { get; private set; }
     public int DisplayOrder { get; private set; }
     public string? IconUrl { get; private set; }
-
-    public Guid TenantId { get; set; }
 
     public Profile Profile { get; private set; } = null!;
 
@@ -22,7 +20,6 @@ public sealed class Skill : Entity, ITenantEntity
         Guid profileId,
         string name,
         SkillLevel level,
-        Guid tenantId,
         string? category = null,
         int displayOrder = 0,
         string? iconUrl = null)
@@ -36,7 +33,6 @@ public sealed class Skill : Entity, ITenantEntity
             ProfileId = profileId,
             Name = name.Trim(),
             Level = level,
-            TenantId = tenantId,
             Category = category?.Trim(),
             DisplayOrder = displayOrder,
             IconUrl = iconUrl?.Trim()

@@ -9,15 +9,13 @@ public record UserDto(
     string? AvatarUrl,
     string Role,
     string? GitHubUsername,
-    Guid TenantId,
     DateTime CreatedAtUtc);
 
 public record CreateUserRequest(
     string FirstName,
     string LastName,
     string Email,
-    string Role,
-    Guid TenantId);
+    string Role);
 
 public record UpdateUserRequest(
     string FirstName,

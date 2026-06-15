@@ -48,8 +48,7 @@ public sealed class ProfilesController : ControllerBase
             request.Title,
             request.Subtitle,
             request.Bio,
-            request.Visibility,
-            request.TenantId);
+            request.Visibility);
 
         var result = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result);

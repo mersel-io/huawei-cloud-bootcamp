@@ -24,7 +24,6 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext, IUn
     public DbSet<User> UsersSet { get; set; } = null!;
     public DbSet<Profile> ProfilesSet { get; set; } = null!;
     public DbSet<ProfileLink> ProfileLinksSet { get; set; } = null!;
-    public DbSet<Tenant> TenantsSet { get; set; } = null!;
     public DbSet<Project> ProjectsSet { get; set; } = null!;
     public DbSet<Skill> SkillsSet { get; set; } = null!;
     public DbSet<Experience> ExperiencesSet { get; set; } = null!;
@@ -36,7 +35,6 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext, IUn
     public IQueryable<User> Users => UsersSet;
     public IQueryable<Profile> Profiles => ProfilesSet;
     public IQueryable<ProfileLink> ProfileLinks => ProfileLinksSet;
-    public IQueryable<Tenant> Tenants => TenantsSet;
     public IQueryable<Project> Projects => ProjectsSet;
     public IQueryable<Skill> Skills => SkillsSet;
     public IQueryable<Experience> Experiences => ExperiencesSet;

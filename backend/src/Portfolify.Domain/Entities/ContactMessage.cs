@@ -3,7 +3,7 @@ using Portfolify.Domain.Enums;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class ContactMessage : AggregateRoot, IAuditableEntity, ITenantEntity
+public sealed class ContactMessage : AggregateRoot, IAuditableEntity
 {
     public Guid ProfileId { get; private set; }
     public string SenderName { get; private set; } = null!;
@@ -15,7 +15,6 @@ public sealed class ContactMessage : AggregateRoot, IAuditableEntity, ITenantEnt
     public DateTime? ReadAtUtc { get; private set; }
     public DateTime? RepliedAtUtc { get; private set; }
 
-    public Guid TenantId { get; set; }
     DateTime IAuditableEntity.CreatedAtUtc { get; set; }
     DateTime? IAuditableEntity.UpdatedAtUtc { get; set; }
 
@@ -29,7 +28,6 @@ public sealed class ContactMessage : AggregateRoot, IAuditableEntity, ITenantEnt
         string senderEmail,
         string subject,
         string message,
-        Guid tenantId,
         string? senderIpAddress = null)
     {
         if (string.IsNullOrWhiteSpace(senderName))
@@ -61,7 +59,6 @@ public sealed class ContactMessage : AggregateRoot, IAuditableEntity, ITenantEnt
             Message = message.Trim(),
             Status = ContactStatus.New,
             SenderIpAddress = senderIpAddress?.Trim(),
-            TenantId = tenantId,
             CreatedAtUtc = DateTime.UtcNow
         };
     }

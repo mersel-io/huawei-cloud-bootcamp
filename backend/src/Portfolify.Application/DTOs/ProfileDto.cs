@@ -26,8 +26,7 @@ public record CreateProfileRequest(
     string Title,
     string? Subtitle,
     string? Bio,
-    string Visibility,
-    Guid TenantId);
+    string Visibility);
 
 public record UpdateProfileRequest(
     string Title,

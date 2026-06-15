@@ -2,7 +2,7 @@ using Portfolify.Domain.Common;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class Experience : AggregateRoot, IAuditableEntity, ITenantEntity
+public sealed class Experience : AggregateRoot, IAuditableEntity
 {
     public Guid ProfileId { get; private set; }
     public string Company { get; private set; } = null!;
@@ -16,7 +16,6 @@ public sealed class Experience : AggregateRoot, IAuditableEntity, ITenantEntity
     public string? CompanyUrl { get; private set; }
     public int DisplayOrder { get; private set; }
 
-    public Guid TenantId { get; set; }
     DateTime IAuditableEntity.CreatedAtUtc { get; set; }
     DateTime? IAuditableEntity.UpdatedAtUtc { get; set; }
 
@@ -29,7 +28,6 @@ public sealed class Experience : AggregateRoot, IAuditableEntity, ITenantEntity
         string company,
         string position,
         DateOnly startDate,
-        Guid tenantId,
         string? description = null,
         string? location = null,
         DateOnly? endDate = null,
@@ -61,7 +59,6 @@ public sealed class Experience : AggregateRoot, IAuditableEntity, ITenantEntity
             CompanyLogoUrl = companyLogoUrl?.Trim(),
             CompanyUrl = companyUrl?.Trim(),
             DisplayOrder = displayOrder,
-            TenantId = tenantId,
             CreatedAtUtc = DateTime.UtcNow
         };
     }

@@ -19,12 +19,10 @@ public sealed class ContactMessageConfiguration : IEntityTypeConfiguration<Conta
         builder.Property(c => c.SenderIpAddress).HasMaxLength(50);
         builder.Property(c => c.ReadAtUtc);
         builder.Property(c => c.RepliedAtUtc);
-        builder.Property(c => c.TenantId).IsRequired();
         builder.Property(c => c.CreatedAtUtc).IsRequired();
         builder.Property(c => c.UpdatedAtUtc);
 
         builder.HasIndex(c => c.ProfileId);
-        builder.HasIndex(c => c.TenantId);
         builder.HasIndex(c => c.Status);
 
         builder.Ignore(c => c.DomainEvents);

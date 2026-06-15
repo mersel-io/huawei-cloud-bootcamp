@@ -19,12 +19,10 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.Property(p => p.Status).IsRequired().HasConversion<string>();
         builder.Property(p => p.DisplayOrder).IsRequired();
         builder.Property(p => p.Technologies).HasMaxLength(1000);
-        builder.Property(p => p.TenantId).IsRequired();
         builder.Property(p => p.CreatedAtUtc).IsRequired();
         builder.Property(p => p.UpdatedAtUtc);
 
         builder.HasIndex(p => p.ProfileId);
-        builder.HasIndex(p => p.TenantId);
 
         builder.HasMany(p => p.ProjectTags)
             .WithOne(pt => pt.Project)

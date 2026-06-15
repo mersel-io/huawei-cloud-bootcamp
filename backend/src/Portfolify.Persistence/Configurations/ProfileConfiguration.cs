@@ -18,12 +18,10 @@ public sealed class ProfileConfiguration : IEntityTypeConfiguration<Profile>
         builder.Property(p => p.Visibility).IsRequired().HasConversion<string>();
         builder.Property(p => p.Theme).HasMaxLength(50);
         builder.Property(p => p.IsPrimary).HasDefaultValue(false);
-        builder.Property(p => p.TenantId).IsRequired();
         builder.Property(p => p.CreatedAtUtc).IsRequired();
         builder.Property(p => p.UpdatedAtUtc);
 
         builder.HasIndex(p => p.Slug).IsUnique();
-        builder.HasIndex(p => p.TenantId);
         builder.HasIndex(p => p.UserId);
 
         builder.HasMany(p => p.Links)

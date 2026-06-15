@@ -2,7 +2,7 @@ using Portfolify.Domain.Common;
 
 namespace Portfolify.Domain.Entities;
 
-public sealed class Education : AggregateRoot, IAuditableEntity, ITenantEntity
+public sealed class Education : AggregateRoot, IAuditableEntity
 {
     public Guid ProfileId { get; private set; }
     public string Institution { get; private set; } = null!;
@@ -16,7 +16,6 @@ public sealed class Education : AggregateRoot, IAuditableEntity, ITenantEntity
     public string? LogoUrl { get; private set; }
     public int DisplayOrder { get; private set; }
 
-    public Guid TenantId { get; set; }
     DateTime IAuditableEntity.CreatedAtUtc { get; set; }
     DateTime? IAuditableEntity.UpdatedAtUtc { get; set; }
 
@@ -29,7 +28,6 @@ public sealed class Education : AggregateRoot, IAuditableEntity, ITenantEntity
         string institution,
         string degree,
         DateOnly startDate,
-        Guid tenantId,
         string? fieldOfStudy = null,
         string? description = null,
         string? grade = null,
@@ -61,7 +59,6 @@ public sealed class Education : AggregateRoot, IAuditableEntity, ITenantEntity
             IsCurrent = isCurrent,
             LogoUrl = logoUrl?.Trim(),
             DisplayOrder = displayOrder,
-            TenantId = tenantId,
             CreatedAtUtc = DateTime.UtcNow
         };
     }

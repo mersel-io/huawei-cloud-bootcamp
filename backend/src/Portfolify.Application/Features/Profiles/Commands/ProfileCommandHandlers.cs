@@ -30,7 +30,6 @@ public sealed class CreateProfileCommandHandler(
             request.UserId,
             request.Slug,
             request.Title,
-            request.TenantId,
             visibility,
             request.Subtitle,
             request.Bio);

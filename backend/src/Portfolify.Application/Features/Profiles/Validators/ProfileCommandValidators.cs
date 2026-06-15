@@ -22,8 +22,6 @@ public sealed class CreateProfileCommandValidator : AbstractValidator<CreateProf
             .NotEmpty()
             .Must(v => Enum.TryParse<Domain.Enums.ProfileVisibility>(v, out _))
             .WithMessage("Invalid visibility value.");
-
-        RuleFor(x => x.TenantId).NotEmpty();
     }
 }
 

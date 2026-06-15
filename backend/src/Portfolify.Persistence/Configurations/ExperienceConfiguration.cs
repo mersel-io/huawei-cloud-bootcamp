@@ -21,12 +21,10 @@ public sealed class ExperienceConfiguration : IEntityTypeConfiguration<Experienc
         builder.Property(e => e.CompanyLogoUrl).HasMaxLength(500);
         builder.Property(e => e.CompanyUrl).HasMaxLength(500);
         builder.Property(e => e.DisplayOrder).IsRequired();
-        builder.Property(e => e.TenantId).IsRequired();
         builder.Property(e => e.CreatedAtUtc).IsRequired();
         builder.Property(e => e.UpdatedAtUtc);
 
         builder.HasIndex(e => e.ProfileId);
-        builder.HasIndex(e => e.TenantId);
 
         builder.Ignore(e => e.DomainEvents);
     }

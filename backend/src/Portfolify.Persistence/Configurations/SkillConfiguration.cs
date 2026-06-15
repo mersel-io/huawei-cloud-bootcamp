@@ -16,10 +16,8 @@ public sealed class SkillConfiguration : IEntityTypeConfiguration<Skill>
         builder.Property(s => s.Category).HasMaxLength(100);
         builder.Property(s => s.DisplayOrder).IsRequired();
         builder.Property(s => s.IconUrl).HasMaxLength(500);
-        builder.Property(s => s.TenantId).IsRequired();
 
         builder.HasIndex(s => s.ProfileId);
-        builder.HasIndex(s => s.TenantId);
 
         builder.Ignore(s => s.DomainEvents);
     }

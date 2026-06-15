@@ -12,10 +12,8 @@ public sealed class TagConfiguration : IEntityTypeConfiguration<Tag>
 
         builder.Property(t => t.Name).IsRequired().HasMaxLength(100);
         builder.Property(t => t.Color).HasMaxLength(20);
-        builder.Property(t => t.TenantId).IsRequired();
 
-        builder.HasIndex(t => t.TenantId);
-        builder.HasIndex(t => new { t.TenantId, t.Name }).IsUnique();
+        builder.HasIndex(t => t.Name).IsUnique();
 
         builder.Ignore(t => t.DomainEvents);
     }

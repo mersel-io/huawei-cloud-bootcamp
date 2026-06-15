@@ -7,7 +7,6 @@ public interface IApplicationDbContext
     IQueryable<User> Users { get; }
     IQueryable<Profile> Profiles { get; }
     IQueryable<ProfileLink> ProfileLinks { get; }
-    IQueryable<Tenant> Tenants { get; }
     IQueryable<Project> Projects { get; }
     IQueryable<Skill> Skills { get; }
     IQueryable<Experience> Experiences { get; }
