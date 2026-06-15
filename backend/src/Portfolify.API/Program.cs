@@ -30,6 +30,16 @@ try
     builder.Services.AddInfrastructureServices();
     builder.Services.AddPersistenceServices(builder.Configuration);
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins("http://localhost:3002")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    });
+
     builder.Services.AddHealthChecks()
         .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
@@ -44,6 +54,7 @@ try
     app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
     app.UseHttpsRedirection();
+    app.UseCors();
     app.UseAuthorization();
     app.MapControllers();
     app.MapHealthChecks("/health");

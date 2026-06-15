@@ -19,15 +19,14 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.OwnsOne(u => u.Email, email =>
-        {
-            email.Property(e => e.Value)
-                .HasColumnName("Email")
-                .IsRequired()
-                .HasMaxLength(256);
+        builder.Property(u => u.Email)
+            .HasConversion(
+                email => email.Value,
+                value => Email.Create(value))
+            .IsRequired()
+            .HasMaxLength(256);
 
-            email.HasIndex(e => e.Value).IsUnique();
-        });
+        builder.HasIndex(u => u.Email).IsUnique();
 
         builder.Property(u => u.Bio).HasMaxLength(1000);
         builder.Property(u => u.AvatarUrl).HasMaxLength(500);
