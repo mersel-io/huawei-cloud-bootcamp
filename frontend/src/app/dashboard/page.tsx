@@ -6,10 +6,10 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
 import { ProfileDto } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Plus,
   ExternalLink,
@@ -19,22 +19,42 @@ import {
   EyeOff,
   Trash2,
   Pencil,
+  Link2,
+  Zap,
+  FolderGit2,
+  Briefcase,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { CreateProfileDialog } from "@/components/create-profile-dialog";
 
 function visibilityIcon(visibility: string) {
   switch (visibility) {
     case "Public":
-      return <Globe className="h-3.5 w-3.5" />;
+      return <Globe className="size-3.5" />;
     case "Private":
-      return <Lock className="h-3.5 w-3.5" />;
+      return <Lock className="size-3.5" />;
     case "Unlisted":
-      return <EyeOff className="h-3.5 w-3.5" />;
+      return <EyeOff className="size-3.5" />;
     default:
-      return <Eye className="h-3.5 w-3.5" />;
+      return <Eye className="size-3.5" />;
   }
+}
+
+function getInitials(firstName: string, lastName: string) {
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }
 
 export default function DashboardPage() {
@@ -77,7 +97,6 @@ export default function DashboardPage() {
   };
 
   const handleDeleteProfile = async (id: string) => {
-    if (!confirm("Bu profili silmek istediğinize emin misiniz?")) return;
     try {
       await api.profiles.delete(id);
       setProfiles((prev) => prev.filter((p) => p.id !== id));
@@ -97,34 +116,80 @@ export default function DashboardPage() {
 
   if (!user) return null;
 
+  const totalSkills = profiles.reduce(
+    (acc, p) => acc + (p.skills?.length || 0),
+    0
+  );
+  const totalLinks = profiles.reduce(
+    (acc, p) => acc + (p.links?.length || 0),
+    0
+  );
+  const totalProjects = profiles.reduce(
+    (acc, p) => acc + (p.projects?.length || 0),
+    0
+  );
+
+  const stats = [
+    { label: "Profil", value: profiles.length, icon: Briefcase },
+    { label: "Yetenek", value: totalSkills, icon: Zap },
+    { label: "Proje", value: totalProjects, icon: FolderGit2 },
+    { label: "Bağlantı", value: totalLinks, icon: Link2 },
+  ];
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Panel</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Panel</h1>
           <p className="mt-1 text-muted-foreground">
             Hoş geldiniz, {user.firstName} {user.lastName}
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setShowCreateProfile(true)}>
-          <Plus className="h-4 w-4" />
+        <Button
+          className="gap-2"
+          onClick={() => setShowCreateProfile(true)}
+        >
+          <Plus className="size-4" />
           Yeni Profil
         </Button>
       </div>
 
+      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <Card key={stat.label}>
+            <CardContent className="flex items-center gap-3 py-4">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <stat.icon className="size-5" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold leading-none">{stat.value}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       <Card className="mb-8">
         <CardContent className="flex items-center gap-4 py-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
-            {user.firstName.charAt(0)}
-            {user.lastName.charAt(0)}
-          </div>
-          <div className="flex-1">
+          <Avatar size="lg">
+            <AvatarFallback className="bg-primary/10 text-base font-semibold text-primary">
+              {getInitials(user.firstName, user.lastName)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
             <p className="font-semibold">
               {user.firstName} {user.lastName}
             </p>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
+            <p className="text-sm text-muted-foreground truncate">{user.email}</p>
           </div>
-          <Badge variant="secondary">{user.role}</Badge>
+          <Badge variant="secondary">
+            {user.role === "Developer"
+              ? "Geliştirici"
+              : user.role === "Student"
+              ? "Öğrenci"
+              : user.role}
+          </Badge>
         </CardContent>
       </Card>
 
@@ -138,20 +203,26 @@ export default function DashboardPage() {
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-48 rounded-xl" />
+            <Skeleton key={i} className="h-56 rounded-xl" />
           ))}
         </div>
       ) : profiles.length === 0 ? (
         <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center gap-4 py-12">
-            <p className="text-muted-foreground">
-              Henüz profil oluşturmadınız.
-            </p>
+          <CardContent className="flex flex-col items-center gap-4 py-16 text-center">
+            <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Sparkles className="size-7" />
+            </div>
+            <div>
+              <p className="text-lg font-medium">Henüz profil oluşturmadınız</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                İlk dijital kartvizitinizi oluşturarak başlayın.
+              </p>
+            </div>
             <Button
               className="gap-2"
               onClick={() => setShowCreateProfile(true)}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="size-4" />
               İlk Profilini Oluştur
             </Button>
           </CardContent>
@@ -161,73 +232,94 @@ export default function DashboardPage() {
           {profiles.map((profile) => (
             <Card
               key={profile.id}
-              className="group transition-all hover:shadow-md"
+              className="group relative gap-0 transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5"
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <CardTitle className="text-lg">{profile.title}</CardTitle>
+              <div className="h-24 bg-gradient-to-br from-primary/80 via-primary/50 to-violet-500/40" />
+              <CardContent className="-mt-10 px-5 pb-5">
+                <div className="mb-3 flex items-start justify-between">
+                  <div className="flex size-12 items-center justify-center rounded-xl border-4 border-background bg-card text-lg font-bold text-primary shadow-sm">
+                    {profile.title.charAt(0).toUpperCase()}
+                  </div>
                   <div className="flex items-center gap-1">
                     {profile.isPrimary && (
                       <Badge variant="default" className="text-xs">
                         Ana
                       </Badge>
                     )}
-                    <Badge
-                      variant="outline"
-                      className="gap-1 text-xs"
-                    >
+                    <Badge variant="outline" className="gap-1 text-xs">
                       {visibilityIcon(profile.visibility)}
                       {profile.visibility}
                     </Badge>
                   </div>
                 </div>
+
+                <h3 className="font-semibold leading-tight">{profile.title}</h3>
                 {profile.subtitle && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
                     {profile.subtitle}
                   </p>
                 )}
-              </CardHeader>
-              <CardContent>
                 {profile.bio && (
-                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                     {profile.bio}
                   </p>
                 )}
-                <div className="mb-4 flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>/{profile.slug}</span>
+
+                <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="font-mono">/{profile.slug}</span>
                   <span>&middot;</span>
                   <span>{profile.links?.length || 0} link</span>
+                  <span>&middot;</span>
+                  <span>{profile.skills?.length || 0} yetenek</span>
                 </div>
-                <Separator className="mb-3" />
-                <div className="flex gap-2">
+
+                <div className="mt-4 flex gap-2">
                   <Link href={`/p/${profile.slug}`} className="flex-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full gap-1"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
+                    <Button variant="outline" size="sm" className="w-full gap-1.5">
+                      <ExternalLink className="size-3.5" />
                       Görüntüle
                     </Button>
                   </Link>
-                  <Link href={`/dashboard/profiles/${profile.id}/edit`} className="flex-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full gap-1"
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
+                  <Link
+                    href={`/dashboard/profiles/${profile.id}/edit`}
+                    className="flex-1"
+                  >
+                    <Button variant="outline" size="sm" className="w-full gap-1.5">
+                      <Pencil className="size-3.5" />
                       Düzenle
                     </Button>
                   </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1 text-destructive hover:text-destructive"
-                    onClick={() => handleDeleteProfile(profile.id)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          size="icon-sm"
+                          className="text-destructive hover:text-destructive"
+                        />
+                      }
+                    >
+                      <Trash2 className="size-3.5" />
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Profili sil</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Bu profili silmek istediğinize emin misiniz? Bu
+                          işlem geri alınamaz.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>İptal</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={() => handleDeleteProfile(profile.id)}
+                        >
+                          Sil
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardContent>
             </Card>

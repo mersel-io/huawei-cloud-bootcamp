@@ -3,10 +3,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/navbar";
 import { AuthProvider } from "@/context/auth-context";
+import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -27,15 +29,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="tr"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-        </AuthProvider>
-        <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Portfolify. Tüm hakları saklıdır.</p>
-        </footer>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            <AuthProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <footer className="border-t py-8 text-center text-sm text-muted-foreground">
+                <p>
+                  &copy; {new Date().getFullYear()} Portfolify. Tüm hakları
+                  saklıdır.
+                </p>
+              </footer>
+            </AuthProvider>
+          </TooltipProvider>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

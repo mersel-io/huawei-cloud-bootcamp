@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface CreateUserDialogProps {
   open: boolean;
@@ -54,10 +56,12 @@ export function CreateUserDialog({
           role: "Developer",
         });
       } else {
-        alert(res.errorMessage || "Bir hata oluştu.");
+        toast.error(res.errorMessage || "Bir hata oluştu.");
       }
     } catch (err) {
-      alert("Bir hata oluştu: " + (err instanceof Error ? err.message : ""));
+      toast.error(
+        "Bir hata oluştu: " + (err instanceof Error ? err.message : "")
+      );
     } finally {
       setLoading(false);
     }
@@ -68,6 +72,9 @@ export function CreateUserDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Kullanıcı Oluştur</DialogTitle>
+          <DialogDescription>
+            Sistemde yeni bir kullanıcı hesabı oluşturun.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -127,7 +134,7 @@ export function CreateUserDialog({
                 setForm((f) => ({ ...f, role: v ?? "Developer" }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

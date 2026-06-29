@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -19,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface CreateProfileDialogProps {
   open: boolean;
@@ -65,10 +67,12 @@ export function CreateProfileDialog({
         });
         onCreated();
       } else {
-        alert(res.errorMessage || "Bir hata oluştu.");
+        toast.error(res.errorMessage || "Bir hata oluştu.");
       }
     } catch (err) {
-      alert("Bir hata oluştu: " + (err instanceof Error ? err.message : ""));
+      toast.error(
+        "Bir hata oluştu: " + (err instanceof Error ? err.message : "")
+      );
     } finally {
       setLoading(false);
     }
@@ -79,6 +83,10 @@ export function CreateProfileDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Yeni Profil Oluştur</DialogTitle>
+          <DialogDescription>
+            Dijital kartvizitinizi oluşturun. Daha sonra detayları
+            düzenleyebilirsiniz.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -96,7 +104,7 @@ export function CreateProfileDialog({
           <div className="space-y-2">
             <Label htmlFor="slug">URL Slug</Label>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <span>portfolify.app/p/</span>
+              <span className="font-mono">/p/</span>
               <Input
                 id="slug"
                 placeholder="kullanici-adi"
@@ -110,7 +118,7 @@ export function CreateProfileDialog({
                       .replace(/-+/g, "-"),
                   }))
                 }
-                className="h-8 flex-1"
+                className="flex-1 font-mono"
               />
             </div>
           </div>
@@ -132,9 +140,7 @@ export function CreateProfileDialog({
               placeholder="Kendinizi tanıtın..."
               rows={3}
               value={form.bio}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, bio: e.target.value }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
             />
           </div>
           <div className="space-y-2">
@@ -145,7 +151,7 @@ export function CreateProfileDialog({
                 setForm((f) => ({ ...f, visibility: v ?? "Public" }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

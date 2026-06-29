@@ -10,15 +10,19 @@ export default async function EditProfilePage({
   const { id } = await params;
 
   let profile;
+  let user = null;
   try {
     const profileRes = await api.profiles.getById(id);
     if (!profileRes.isSuccess || !profileRes.data) {
       notFound();
     }
     profile = profileRes.data;
+
+    const userRes = await api.users.getById(profile.userId);
+    user = userRes.isSuccess ? userRes.data : null;
   } catch {
     notFound();
   }
 
-  return <EditProfileForm profile={profile} />;
+  return <EditProfileForm profile={profile} user={user} />;
 }
