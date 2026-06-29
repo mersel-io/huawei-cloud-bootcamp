@@ -14,7 +14,7 @@ permissions:
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/portfolify-frontend
-  NEXT_PUBLIC_API_URL: http://213.250.148.96:8080
+  NEXT_PUBLIC_API_URL: https://api.portfolify.hwc-bootcamp.mersel.io
 
 jobs:
   build-and-push:
