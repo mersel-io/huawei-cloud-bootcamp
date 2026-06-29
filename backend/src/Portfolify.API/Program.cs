@@ -7,7 +7,9 @@ using Portfolify.API.Middleware;
 using Portfolify.Application;
 using Portfolify.Infrastructure;
 using Portfolify.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Portfolify.Persistence;
+using Portfolify.Persistence.Context;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -86,6 +88,12 @@ try
         .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
     var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.Migrate();
+    }
 
     if (app.Environment.IsDevelopment())
     {
