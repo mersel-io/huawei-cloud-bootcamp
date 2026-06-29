@@ -69,11 +69,14 @@ try
     builder.Services.AddInfrastructureServices(builder.Configuration);
     builder.Services.AddPersistenceServices(builder.Configuration);
 
+    var allowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:3002")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>
         {
-            policy.WithOrigins("http://localhost:3002")
+            policy.WithOrigins(allowedOrigins)
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

@@ -1,0 +1,29 @@
+services:
+  backend:
+    image: ghcr.io/mersel-io/portfolify-backend:latest
+    container_name: portfolify-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Cors__AllowedOrigins: ${CORS_ALLOWED_ORIGINS}
+      Jwt__Issuer: ${JWT_ISSUER:-Portfolify}
+      Jwt__Audience: ${JWT_AUDIENCE:-PortfolifyUsers}
+      Jwt__Key: ${JWT_KEY}
+      Jwt__ExpiryMinutes: ${JWT_EXPIRY_MINUTES:-1440}
+    networks:
+      - portfolify
+
+  frontend:
+    image: ghcr.io/mersel-io/portfolify-frontend:latest
+    container_name: portfolify-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - portfolify
+
+networks:
+  portfolify:
+    driver: bridge
